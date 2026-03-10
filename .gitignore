@@ -1,0 +1,49 @@
+# Бинарные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Директории с бинарниками
+/bin/
+/dist/
+/build/
+
+# Временные файлы и директории
+/tmp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Файлы логов
+*.log
+/logs/
+/log/
+
+# Файлы конфигурации
+.env
+*.env
+.env.*
+
+# Временные файлы Go тестов
+profile.out
+cover.html
+coverage.out
+*.coverprofile
+race.log
+
+# Зависимости
+/vendor/
+
+.vscode/
+
+.dockerignore
+
+/migrations/*.sql
+/migrations/*.go
