@@ -37,6 +37,7 @@ func respondWithError(w http.ResponseWriter, statusCode int, message string) {
 func (handler *TasksHandler) GetAllTasks(w http.ResponseWriter, _ *http.Request) {
 	tasks, err := handler.repo.GetAll()
 	if err != nil {
+		log.Printf("error in TasksHandler.GetAllTasks: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "task receiving error")
 		return
 	}
@@ -114,6 +115,7 @@ func (handler *TasksHandler) UpdateTask(w http.ResponseWriter, r *http.Request) 
 		if errors.Is(err, appErrors.TaskNotFound) {
 			respondWithError(w, http.StatusNotFound, "task not found")
 		} else {
+			log.Printf("error on task updating: %v", err)
 			respondWithError(w, http.StatusInternalServerError, "error on task updating")
 		}
 		return

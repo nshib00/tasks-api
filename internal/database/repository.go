@@ -41,7 +41,7 @@ func (repo *TasksRepository) GetAll() ([]models.Task, error) {
 	var tasks []models.Task
 
 	query := `
-		SELECT title, description, completed, created_at, updated_at
+		SELECT id, title, description, completed, created_at, updated_at
 		FROM tasks
 		ORDER BY updated_at DESC
 	`
@@ -53,10 +53,10 @@ func (repo *TasksRepository) GetAll() ([]models.Task, error) {
 }
 
 func (repo *TasksRepository) GetByID(id int) (*models.Task, error) {
-	var task *models.Task
+	var task models.Task
 
 	query := `
-		SELECT description, completed, created_at, updated_at
+		SELECT id, title, description, completed, created_at, updated_at
 		FROM tasks
 		WHERE id = $1
 	`
@@ -67,7 +67,7 @@ func (repo *TasksRepository) GetByID(id int) (*models.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return task, nil
+	return &task, nil
 }
 
 func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*models.Task, error) {
@@ -87,7 +87,7 @@ func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*mode
 	}
 	task.UpdatedAt = time.Now()
 
-	var updatedTask *models.Task
+	var updatedTask models.Task
 	query := `
 		UPDATE tasks
 		SET title=$1, description=$2, completed=$3, updated_at=$4
