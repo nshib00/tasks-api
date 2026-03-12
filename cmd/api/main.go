@@ -24,7 +24,7 @@ func main() {
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 	db, err := database.Connect(dbURL)
 	if err != nil {
-		log.Fatal("database connection error: %v", err)
+		log.Fatal("database connection error:", err)
 		return
 	}
 	defer db.Close()

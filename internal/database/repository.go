@@ -3,9 +3,10 @@ package database
 import (
 	"database/sql"
 	"errors"
+	appErrors "tasks-api/internal/errors"
 	"tasks-api/internal/models"
 	"time"
-	appErrors "tasks-api/internal/errors"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -66,7 +67,7 @@ func (repo *TasksRepository) GetByID(id int) (*models.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &task, nil
+	return task, nil
 }
 
 func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*models.Task, error) {
@@ -84,7 +85,7 @@ func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*mode
 	if input.Completed != nil {
 		task.Completed = *input.Completed
 	}
-	task.UpdatedAt := time.Now()
+	task.UpdatedAt = time.Now()
 
 	var updatedTask *models.Task
 	query := `
@@ -93,25 +94,24 @@ func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*mode
 		WHERE id=$5
 		RETURNING id, title, description, completed, updated_at
 	`
-	err := repo.db.QueryRowx(
-		query, task.Title, task.Description, task.Completed, task.UpdatedAt, id
+	err = repo.db.QueryRowx(
+		query, task.Title, task.Description, task.Completed, task.UpdatedAt, id,
 	).StructScan(&updatedTask)
 	if err != nil {
 		return nil, err
 	}
-	return &task, nil
+	return task, nil
 }
 
 func (repo *TasksRepository) Delete(id int) error {
-	query = `DELETE FROM tasks WHERE id=$1`
+	query := `DELETE FROM tasks WHERE id=$1`
 	result, err := repo.db.Exec(query, id)
-	affectedRows := result.RowsAffected()
-
-	if affectedRows == 0 {
-		return appErrors.TaskNotFound
-	} 
+	affectedRows, err := result.RowsAffected()
 	if err != nil {
 		return err
+	}
+	if affectedRows == 0 {
+		return appErrors.TaskNotFound
 	}
 	return nil
 }
