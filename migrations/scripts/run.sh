@@ -11,10 +11,9 @@ DB_USER=${POSTGRES_USER}
 DB_PASSWORD=${POSTGRES_PASSWORD}
 DB_NAME=${POSTGRES_DB}
 DB_PORT=${POSTGRES_PORT:-5432}
-DB_NETWORK=${DOCKER_NETWORK}
 
-docker run -v $(pwd)/migrations:/migrations --network $DB_NETWORK \
+docker run --rm -v $(pwd)/migrations:/migrations --network host \
    migrate/migrate \
   -path=/migrations/ \
-  -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+  -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" \
   "$@"

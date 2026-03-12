@@ -8,6 +8,8 @@ import (
 	"tasks-api/internal/database"
 	"tasks-api/internal/handlers"
 	"tasks-api/internal/middleware"
+
+	"github.com/joho/godotenv"
 )
 
 func getFromEnv(varName string) string {
@@ -19,14 +21,19 @@ func getFromEnv(varName string) string {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("warning: .env file not found")
+	}
+
 	dbUser := getFromEnv("POSTGRES_USER")
 	dbPassword := getFromEnv("POSTGRES_PASSWORD")
 	dbHost := getFromEnv("POSTGRES_HOST")
 	dbPort := getFromEnv("POSTGRES_PORT")
-	dbName := getFromEnv("POSTGRES_NAME")
+	dbName := getFromEnv("POSTGRES_DB")
 	serverPort := getFromEnv("SERVER_PORT")
 
-	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
 	db, err := database.Connect(dbURL)
 	if err != nil {
 		log.Fatal("database connection error:", err)
@@ -44,10 +51,10 @@ func main() {
 
 	loggedMux := middleware.LoggingMiddleware(mux)
 	serverAddr := ":" + serverPort
+	log.Printf("server started on %s", serverAddr)
 	if err := http.ListenAndServe(serverAddr, loggedMux); err != nil {
 		log.Fatal("server error: ", err)
 	}
-	log.Printf("server started on %s", serverAddr)
 }
 
 func taskMethodHandler(handlerFunc http.HandlerFunc, allowedMethod string) http.HandlerFunc {
