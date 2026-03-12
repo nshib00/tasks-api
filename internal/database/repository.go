@@ -5,7 +5,7 @@ import (
 	"errors"
 	"tasks-api/internal/models"
 	"time"
-
+	appErrors "tasks-api/internal/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -72,7 +72,7 @@ func (repo *TasksRepository) GetByID(id int) (*models.Task, error) {
 func (repo *TasksRepository) Update(id int, input models.UpdateTaskInput) (*models.Task, error) {
 	task, err := repo.GetByID(id)
 	if err != nil {
-		return nil, errors.New("task not found")
+		return nil, appErrors.TaskNotFound
 	}
 
 	if input.Title != nil {
@@ -108,7 +108,7 @@ func (repo *TasksRepository) Delete(id int) error {
 	affectedRows := result.RowsAffected()
 
 	if affectedRows == 0 {
-		return errors.New("task didn't exist")
+		return appErrors.TaskNotFound
 	} 
 	if err != nil {
 		return err
