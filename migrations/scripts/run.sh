@@ -16,5 +16,5 @@ DB_NETWORK=${DOCKER_NETWORK}
 docker run -v $(pwd)/migrations:/migrations --network $DB_NETWORK \
    migrate/migrate \
   -path=/migrations/ \
-  -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" \
+  -database "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
   "$@"
